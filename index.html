@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Act 5</title>
+
+    <style>
+        p {
+            font-size: 30px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <button @click="incrementClicks">Click me {{ clickCount }}</button>
+        <p style="font-size: 30px;">{{ saludo }}</p>
+        <input type="text" v-model="nombre" placeholder="Nombre">
+        <br><br>
+        <input type="number" v-model="numero1" placeholder="Número 1">
+        <input type="number" v-model="numero2" placeholder="Número 2">
+        <button @click="sumarNumeros">Sumar</button>
+        <p style="font-size: 30px;">Resultado: {{ resultado }}</p>
+
+
+    </div>
+
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    nombre: '',
+                    clickCount: 0,
+                    numero1: 0,
+                    numero2: 0,
+                    resultado: 0
+                };
+            },
+            computed: {
+                saludo() {
+                    return `Hola ${this.nombre}`;
+                }
+            },
+            methods: {
+                incrementClicks() {
+                    this.clickCount++;
+                },
+                sumarNumeros() {
+                    this.resultado = this.numero1 + this.numero2;
+                }
+            }
+        });
+
+        app.mount('#app');
+    </script>
+</body>
+
+</html>
