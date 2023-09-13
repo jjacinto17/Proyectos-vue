@@ -27,8 +27,16 @@
         <input type="number" v-model="numero2" placeholder="Número 2">
         <button @click="sumarNumeros">Sumar</button>
         <p style="font-size: 30px;">Resultado: {{ resultado }}</p>
-
-
+        <br>
+        <p style="font-size: 30px"> RESULTADO</p>
+        <ul>
+            <li v-for="(persona, index) in personas" :key="index">{{ persona.nombre }} {{ persona.apellidos }}</li>
+        </ul>
+        <p style="font-size: 20px;">Nombre(s)</p>
+        <input type="text" v-model="nombre_l" placeholder="Nombre"> <br>
+        <p style="font-size: 20px;">Apellido(s)</p>
+        <input type="text" v-model="apellidos" placeholder="Apellidos"> <br> <br>
+        <button @click="guardarPersona">Guardar</button>
     </div>
 
     <script>
@@ -36,10 +44,13 @@
             data() {
                 return {
                     nombre: '',
+                    nombre_l: '',
+                    apellidos: '',
                     clickCount: 0,
                     numero1: 0,
                     numero2: 0,
-                    resultado: 0
+                    resultado: 0,
+                    personas: []
                 };
             },
             computed: {
@@ -53,6 +64,11 @@
                 },
                 sumarNumeros() {
                     this.resultado = this.numero1 + this.numero2;
+                },
+                guardarPersona() {
+                    this.personas.push({ nombre: this.nombre_l, apellidos: this.apellidos });
+                    this.nombre_l = '';
+                    this.apellidos = '';
                 }
             }
         });
