@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Act 5</title>
+    <title>Act 12</title>
 
     <style>
         p {
@@ -19,58 +19,53 @@
 
 <body>
     <div id="app">
-        <button @click="incrementClicks">Click me {{ clickCount }}</button>
-        <p style="font-size: 30px;">{{ saludo }}</p>
-        <input type="text" v-model="nombre" placeholder="Nombre">
-        <br><br>
-        <input type="number" v-model="numero1" placeholder="Número 1">
-        <input type="number" v-model="numero2" placeholder="Número 2">
-        <button @click="sumarNumeros">Sumar</button>
-        <p style="font-size: 30px;">Resultado: {{ resultado }}</p>
-        <br>
-        <p style="font-size: 30px"> RESULTADO</p>
-        <ul>
-            <li v-for="(persona, index) in personas" :key="index">{{ persona.nombre }} {{ persona.apellidos }}</li>
-        </ul>
-        <p style="font-size: 20px;">Nombre(s)</p>
-        <input type="text" v-model="nombre_l" placeholder="Nombre"> <br>
-        <p style="font-size: 20px;">Apellido(s)</p>
-        <input type="text" v-model="apellidos" placeholder="Apellidos"> <br> <br>
-        <button @click="guardarPersona">Guardar</button>
+        <form @submit.prevent="login" v-if="!isLoggedIn"> <!-- Mostrar el formulario solo si no ha iniciado sesión -->
+            <fieldset>
+                <legend>Email</legend>
+                <input type="text" v-model="email" placeholder="Email">
+            </fieldset>
+
+            <fieldset>
+                <legend>Password</legend>
+                <input type="password" v-model="password" placeholder="Password">
+            </fieldset>
+
+            <button type="submit">Iniciar Sesión</button>
+        </form>
+        <p v-if="loginError" style="color: red;">Credenciales incorrectas. Intente nuevamente.</p>
+        <p v-if="isLoggedIn" style="color: green;">¡Inicio de sesión exitoso!</p>
     </div>
 
     <script>
         const app = Vue.createApp({
             data() {
                 return {
-                    nombre: '',
-                    nombre_l: '',
-                    apellidos: '',
-                    clickCount: 0,
-                    numero1: 0,
-                    numero2: 0,
-                    resultado: 0,
-                    personas: []
+                    email: '',
+                    password: '',
+                    loginError: false,
+                    isLoggedIn: false,
+                    users: [
+                        { email: 'usuario1@gmail.com', password: 'pass1' },
+                        { email: 'usuario2@gmail.com', password: 'pass2' },
+                    ],
                 };
             },
-            computed: {
-                saludo() {
-                    return `Hola ${this.nombre}`;
-                }
-            },
             methods: {
-                incrementClicks() {
-                    this.clickCount++;
+                login() {
+                    const user = this.users.find(u => u.email === this.email && u.password === this.password);
+
+                    if (user) {
+                        this.isLoggedIn = true;
+                        this.loginError = false;
+                    } else {
+                        this.isLoggedIn = false;
+                        this.loginError = true;
+                    }
+
+                    this.email = '';
+                    this.password = '';
                 },
-                sumarNumeros() {
-                    this.resultado = this.numero1 + this.numero2;
-                },
-                guardarPersona() {
-                    this.personas.push({ nombre: this.nombre_l, apellidos: this.apellidos });
-                    this.nombre_l = '';
-                    this.apellidos = '';
-                }
-            }
+            },
         });
 
         app.mount('#app');
@@ -78,3 +73,4 @@
 </body>
 
 </html>
+
