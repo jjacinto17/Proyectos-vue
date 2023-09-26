@@ -4,13 +4,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Act 12</title>
+    <title>Act 14</title>
 
     <style>
         p {
             font-size: 30px;
             font-weight: bold;
             margin-top: 10px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tbody tr:hover {
+            background-color: #ddd;
+        }
+
+        button {
+            margin-top: 20px;
+            background-color: #4201cd;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #ff0000;
         }
     </style>
 
@@ -19,21 +60,91 @@
 
 <body>
     <div id="app">
-        <form @submit.prevent="login" v-if="!isLoggedIn"> <!-- Mostrar el formulario solo si no ha iniciado sesión -->
-            <fieldset>
-                <legend>Email</legend>
-                <input type="text" v-model="email" placeholder="Email">
-            </fieldset>
+        <div v-if="!isLoggedIn && !isRegistering">
+            <form @submit.prevent="login">
+                <fieldset>
+                    <legend>Email</legend>
+                    <input type="text" v-model="email" placeholder="Email">
+                </fieldset>
 
-            <fieldset>
-                <legend>Password</legend>
-                <input type="password" v-model="password" placeholder="Password">
-            </fieldset>
+                <fieldset>
+                    <legend>Password</legend>
+                    <input type="password" v-model="password" placeholder="Password">
+                </fieldset>
 
-            <button type="submit">Iniciar Sesión</button>
-        </form>
-        <p v-if="loginError" style="color: red;">Credenciales incorrectas. Intente nuevamente.</p>
-        <p v-if="isLoggedIn" style="color: green;">¡Inicio de sesión exitoso!</p>
+                <button type="submit">Iniciar Sesión</button>
+            </form>
+            <button @click="toggleRegistration">Registrar Nuevo Usuario</button>
+            <p v-if="loginError" style="color: red;">Credenciales incorrectas. Intente nuevamente.</p>
+        </div>
+
+        <div v-if="isRegistering">
+            <form @submit.prevent="register">
+                <fieldset>
+                    <legend>Email</legend>
+                    <input type="text" v-model="newEmail" placeholder="Email">
+                </fieldset>
+
+                <fieldset>
+                    <legend>Password</legend>
+                    <input type="password" v-model="newPassword" placeholder="Password">
+                </fieldset>
+
+7                <fieldset>
+                    <legend>Número de Usuario</legend>
+                    <input type="text" v-model="newNumero" placeholder="Número de Usuario">
+                </fieldset>
+
+                <fieldset>
+                    <legend>Nombre</legend>
+                    <input type="text" v-model="newNombre" placeholder="Nombre">
+                </fieldset>
+
+                <fieldset>
+                    <legend>Apellido</legend>
+                    <input type="text" v-model="newApellido" placeholder="Apellido">
+                </fieldset>
+
+                <fieldset>
+                    <legend>Dirección</legend>
+                    <input type="text" v-model="newDireccion" placeholder="Dirección">
+                </fieldset>
+
+                <fieldset>
+                    <legend>Ciudad</legend>
+                    <input type="text" v-model="newCiudad" placeholder="Ciudad">
+                </fieldset>
+
+                <button type="submit">Registrar</button>
+            </form>
+            <button @click="toggleRegistration">Volver a Inicio de Sesión</button>
+        </div>
+
+        <div v-if="isLoggedIn">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Número de Usuario</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Email</th>
+                        <th>Dirección</th>
+                        <th>Ciudad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(user, index) in users" :key="index">
+                        <td>{{ user.numero }}</td>
+                        <td>{{ user.nombre }}</td>
+                        <td>{{ user.apellido }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.direccion }}</td>
+                        <td>{{ user.ciudad }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <button @click="logout">Cerrar Sesión</button>
+        </div>
     </div>
 
     <script>
@@ -42,15 +153,32 @@
                 return {
                     email: '',
                     password: '',
+                    newEmail: '',
+                    newPassword: '',
+                    newNumero: '',
+                    newNombre: '',
+                    newApellido: '',
+                    newDireccion: '',
+                    newCiudad: '',
                     loginError: false,
                     isLoggedIn: false,
-                    users: [
-                        { email: 'usuario1@gmail.com', password: 'pass1' },
-                        { email: 'usuario2@gmail.com', password: 'pass2' },
-                    ],
+                    isRegistering: false, 
+                    users: [], 
                 };
             },
             methods: {
+                async loadUsers() {
+                    try {
+                        const response = await fetch('usuarios.json'); // Cambiar el nombre del archivo JSON
+                        if (response.ok) {
+                            this.users = await response.json();
+                        } else {
+                            console.error('Error al cargar usuarios');
+                        }
+                    } catch (error) {
+                        console.error('Error al cargar usuarios', error);
+                    }
+                },
                 login() {
                     const user = this.users.find(u => u.email === this.email && u.password === this.password);
 
@@ -65,6 +193,40 @@
                     this.email = '';
                     this.password = '';
                 },
+                register() {
+                    const newUser = {
+                        numero: this.newNumero,
+                        nombre: this.newNombre,
+                        apellido: this.newApellido,
+                        email: this.newEmail,
+                        direccion: this.newDireccion,
+                        ciudad: this.newCiudad,
+                        password: this.newPassword,
+                    };
+                    
+                    this.users.push(newUser);
+
+                    this.newNumero = '';
+                    this.newNombre = '';
+                    this.newApellido = '';
+                    this.newEmail = '';
+                    this.newDireccion = '';
+                    this.newCiudad = '';
+                    this.newPassword = '';
+
+                    this.isLoggedIn = true;
+                    this.isRegistering = false;
+                },
+                logout() {
+                    this.isLoggedIn = false;
+                    this.loginError = false;
+                },
+                toggleRegistration() {
+                    this.isRegistering = !this.isRegistering;
+                },
+            },
+            created() {
+                this.loadUsers();
             },
         });
 
@@ -73,4 +235,3 @@
 </body>
 
 </html>
-

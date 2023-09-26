@@ -1,0 +1,21 @@
+[
+    {
+        "numero": 1,
+        "nombre": "Josue",
+        "apellido": "Jacinto",
+        "email": "usuario@gmail.com",
+        "password": "pass1",
+        "direccion": "Camino real",
+        "ciudad": "La paz"
+    },
+    {
+        "numero": 2,
+        "nombre": "Jos",
+        "apellido": "Castillo",
+        "email": "josc@gmail.com",
+        "password": "pass2",
+        "direccion": "Miramar",
+        "ciudad": "La paz"
+    }
+]
+
